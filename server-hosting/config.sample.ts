@@ -1,5 +1,6 @@
 export const Config = {
-     // compulsory parameters
+     // Required parameters
+     // ===================
 
      // Server region and EC2 machineImage AMI-ID.
      // Set region as required for lowest latency, set EC2 machineImage AMI-ID
@@ -10,6 +11,7 @@ export const Config = {
 
      // server hosting account
      account: '',
+
      // prefix for all resources in this app
      prefix: 'SatisfactoryHosting',
 
@@ -25,24 +27,28 @@ export const Config = {
      // set to false if you don't want an api to
      // restart game server and true if you do
      restartApi: true,
+
      // Set to true if you want to use Satisfactory Experimental
      useExperimentalBuild: false,
 
-     // optional parameters
+     // ------------------------------------------------------------------------
 
-     // bucket for storing save files
-     // you can use an existing bucket
-     // or leave it empty to create a new one
+     // Optional parameters
+     // ===================
+
+     // Bucket for storing save files. You can use an existing bucket or leave
+     // it empty to create a new one
      bucketName: '',
-     // server hosting vpc
-     // Create a vpc and it's id here
-     // or leave it empty to use default vpc
+
+     // Server hosting VPC
+     // Create a vpc and its ID here or leave it empty to use default VPC
      vpcId: '',
-     // specify server subnet
-     // leave blank (preferred option) for auto-placement
-     // If vpc is given specify subnet for that vpc
-     // If vpc is not given specify subnet for default vpc
+
+     // Server subnet. Leave blank (preferred option) for auto-placement
+     // If vpcId is given, specify subnet for that VPC. Otherwise, specify the
+     // subnet in the default VPC to use.
      subnetId: '',
-     // Needed if subnetId is specified (i.e. us-west-2a)
+
+     // Needed if subnetId is specified (e.g. us-west-2a).
      availabilityZone: ''
 };
