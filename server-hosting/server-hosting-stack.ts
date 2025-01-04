@@ -7,6 +7,7 @@ import * as s3_assets from 'aws-cdk-lib/aws-s3-assets';
 import * as lambda_nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as apigw from 'aws-cdk-lib/aws-apigateway';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export class ServerHostingStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -144,7 +145,8 @@ export class ServerHostingStack extends Stack {
         timeout: Duration.seconds(10),
         environment: {
           INSTANCE_ID: server.instanceId
-        }
+        },
+        runtime: Runtime.NODEJS_22_X
       })
 
       startServerLambda.addToRolePolicy(new iam.PolicyStatement({
