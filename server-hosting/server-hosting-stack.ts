@@ -73,8 +73,7 @@ export class ServerHostingStack extends Stack {
     machineImageMap[Config.region] = Config.ec2MachineImage;
 
     const server = new ec2.Instance(this, `${prefix}Server`, {
-      // 2 vCPU, 8 GB RAM should be enough for most factories
-      instanceType: new ec2.InstanceType("m5a.large"),
+      instanceType: new ec2.InstanceType(Config.ec2InstanceType),
       // get exact ami from parameter exported by canonical
       // https://discourse.ubuntu.com/t/finding-ubuntu-images-with-the-aws-ssm-parameter-store/15507
       machineImage: ec2.MachineImage.genericLinux(machineImageMap),

@@ -12,6 +12,16 @@ export const Config = {
      account: '',
      // prefix for all resources in this app
      prefix: 'SatisfactoryHosting',
+
+     // Type of instance to use to host Satisfactory. m6a.xlarge meets
+     // requirements for Satisfactory v1.0, but adjust as required for
+     // price/performance. Cheaper instances will host smaller maps, but may
+     // struggle as your factory grows. Larger instances will host larger
+     // factories, but will be a waste money with smaller factories.
+     //
+     // This can also be changed as necessary as your factory grows!()
+     ec2InstanceType: 'm6a.xlarge',
+
      // set to false if you don't want an api to
      // restart game server and true if you do
      restartApi: true,
