@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Note: Arguments to this script 
+# Note: Arguments to this script
 #  1: string - S3 bucket for your backup save files (required)
 #  2: true|false - whether to use Satisfactory Experimental build (optional, default false)
 S3_SAVE_BUCKET=$1
@@ -16,7 +16,7 @@ apt update
 echo steam steam/question 'select' "I AGREE" | sudo debconf-set-selections
 echo steam steam/license note '' | sudo debconf-set-selections
 
-apt install -y unzip lib32gcc1 steamcmd
+apt install -y unzip ca-certificates locales lib32gcc-s1 libsdl2-2.0-0:i386 lib32gcc-s1 steamcmd
 
 # install satisfactory: https://satisfactory.fandom.com/wiki/Dedicated_servers
 if [ $USE_EXPERIMENTAL_BUILD = "true" ]; then
@@ -37,13 +37,13 @@ After=syslog.target network.target nss-lookup.target network-online.target
 [Service]
 Environment="LD_LIBRARY_PATH=./linux64"
 ExecStartPre=$STEAM_INSTALL_SCRIPT
-ExecStart=/home/ubuntu/.steam/steamapps/common/SatisfactoryDedicatedServer/FactoryServer.sh
+ExecStart=/home/ubuntu/.steam/steam/steamapps/common/SatisfactoryDedicatedServer/FactoryServer.sh
 User=ubuntu
 Group=ubuntu
 StandardOutput=journal
 Restart=on-failure
 KillSignal=SIGINT
-WorkingDirectory=/home/ubuntu/.steam/steamapps/common/SatisfactoryDedicatedServer
+WorkingDirectory=/home/ubuntu/.steam/steam/steamapps/common/SatisfactoryDedicatedServer
 
 [Install]
 WantedBy=multi-user.target
