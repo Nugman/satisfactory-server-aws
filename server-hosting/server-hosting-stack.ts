@@ -60,7 +60,14 @@ export class ServerHostingStack extends Stack {
     const securityGroup = new ec2.SecurityGroup(this, `${prefix}ServerSecurityGroup`, {
       vpc,
       description: "Allow Satisfactory client to connect to server",
-    })
+    });
+
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(7777), "Satisfactory  Game port TCP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.udp(7777), "Satisfactory Game port UDP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(15000), "Satisfactory Beacon port TCP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.udp(15000), "Satisfactory Beacon port UDP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(15777), "Satisfactory Query port TCP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.udp(15777), "Satisfactory Query port UDP");
 
     let machineImageMap: Record<string, string> = {};
     machineImageMap[Config.region] = Config.ec2MachineImage;
