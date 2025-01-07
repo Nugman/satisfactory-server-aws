@@ -21,14 +21,14 @@ export class ServerHostingStack extends Stack {
     //////////////////////////////////////////
 
     let lookUpOrDefaultVpc = (vpcId: string): ec2.IVpc => {
-      // lookup vpc if given
       if (vpcId) {
+        // lookup vpc if given
         return ec2.Vpc.fromLookup(this, `${prefix}Vpc`, {
           vpcId
         })
 
-        // use default vpc otherwise
       } else {
+        // use default vpc otherwise
         return ec2.Vpc.fromLookup(this, `${prefix}Vpc`, {
           isDefault: true
         })
@@ -36,8 +36,8 @@ export class ServerHostingStack extends Stack {
     }
 
     let publicOrLookupSubnet = (subnetId: string, availabilityZone: string): ec2.SubnetSelection => {
-      // if subnet id is given select it
       if (subnetId && availabilityZone) {
+        // if subnet id is given select it
         return {
           subnets: [
             ec2.Subnet.fromSubnetAttributes(this, `${Config.prefix}ServerSubnet`, {
@@ -47,8 +47,8 @@ export class ServerHostingStack extends Stack {
           ]
         };
 
-        // else use any available public subnet
       } else {
+        // else use any available public subnet
         return { subnetType: ec2.SubnetType.PUBLIC };
       }
     }
@@ -70,22 +70,22 @@ export class ServerHostingStack extends Stack {
 
     const server = new ec2.Instance(this, `${prefix}Server`, {
       instanceType: new ec2.InstanceType(Config.ec2InstanceType),
-      // get exact ami from parameter exported by canonical
-      // https://discourse.ubuntu.com/t/finding-ubuntu-images-with-the-aws-ssm-parameter-store/15507
       machineImage: ec2.MachineImage.genericLinux(machineImageMap),
-      // storage for steam, satisfactory and save files
+
+      // 15 GB EBS volume for save data
       blockDevices: [
         {
           deviceName: "/dev/sda1",
           volume: ec2.BlockDeviceVolume.ebs(15),
         }
       ],
-      // server needs a public ip to allow connections
+
+      // Aerver needs a public IP to allow connections
       vpcSubnets,
       userDataCausesReplacement: true,
       vpc,
       securityGroup,
-    })
+    });
 
     // Add Base SSM Permissions, so we can use AWS Session Manager to connect to our server, rather than external SSH.
     server.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
@@ -140,17 +140,26 @@ export class ServerHostingStack extends Stack {
     // Add api to start server
     //////////////////////////////
 
+    // Upload HTML template to S3. This will be sent to the user when they hit
+    // the API endpoint to start the server.
+    const htmlTemplate = new s3_assets.Asset(this, `${Config.prefix}HtmlTemplate`, {
+      path: './server-hosting/lambda/html-template.html'
+    });
+
     if (Config.restartApi && Config.restartApi === true) {
       const startServerLambda = new lambda_nodejs.NodejsFunction(this, `${Config.prefix}StartServerLambda`, {
         entry: './server-hosting/lambda/index.ts',
         description: "Restart game server",
-        timeout: Duration.seconds(10),
+        timeout: Duration.seconds(20),
         environment: {
-          INSTANCE_ID: server.instanceId
+          INSTANCE_ID: server.instanceId,
+          HTML_TEMPLATE_S3_BUCKET: htmlTemplate.bucket.bucketName,
+          HTML_TEMPLATE_S3_KEY: htmlTemplate.s3ObjectKey,
         },
         runtime: Runtime.NODEJS_22_X
-      })
+      });
 
+      // Allow the lambda function to start the instance.
       startServerLambda.addToRolePolicy(new iam.PolicyStatement({
         actions: [
           'ec2:StartInstances',
@@ -158,12 +167,28 @@ export class ServerHostingStack extends Stack {
         resources: [
           `arn:aws:ec2:*:${Config.account}:instance/${server.instanceId}`,
         ]
-      }))
+      }));
 
+      // Allow the lambda function to describe the instance, so it can get the
+      // public IP.
+      startServerLambda.addToRolePolicy(new iam.PolicyStatement({
+        actions: [
+          'ec2:DescribeInstances',
+        ],
+        resources: [
+          `*`,
+        ]
+      }));
+
+      // Allow the lambda function can read the HTML template from S3.
+      htmlTemplate.grantRead(startServerLambda.role!)
+
+      // Create the API Gateway endpoint so that we can start the server from
+      // our browser using a special link.
       new apigw.LambdaRestApi(this, `${Config.prefix}StartServerApi`, {
         handler: startServerLambda,
         description: "Trigger lambda function to start server",
-      })
+      });
     }
   }
 }
