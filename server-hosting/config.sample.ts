@@ -7,7 +7,7 @@ export const Config = {
      // to be the amd64 Ubuntu version that you want to run. Look up the
      // appropriate ID here: https://cloud-images.ubuntu.com/locator/ec2/
      region: '',
-     ec2MachineImage: 'ami-0c1871cb16e34a297',
+     ec2MachineImage: 'ami-074d4131321dc4f06',
 
      // server hosting account
      account: '',
