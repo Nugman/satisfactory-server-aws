@@ -175,8 +175,7 @@ however these are unsupported so you'll need to work it out for yourself:
    [DuckDns](https://www.duckdns.org/) provide a way to automatically manage
    when the IP address changes.  Once setup, you just use their URL and they
    handle everything else behind the scenes. This method may not allow you to
-   use a custom domain, and may require some effort to install a service on your
-   ec2 instance to manage this.
+   use a custom domain. Populate the related settings in `config.ts` to enable.
 
 ## Contributing
 

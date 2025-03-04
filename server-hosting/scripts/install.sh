@@ -2,10 +2,28 @@
 
 # Note: Arguments to this script
 #  1: string - S3 bucket for your backup save files (required)
-#  2: true|false - whether to use Satisfactory Experimental build (optional, default false)
+#  2: true|false - whether to use Satisfactory Experimental build (required)
+#  3: true|false - whether to use DuckDNS (optional, default false)
+#  4: string - DuckDNS Domain Name (optional)
+#  5: string - DuckDNS Token (optional)
 S3_SAVE_BUCKET=$1
 USE_EXPERIMENTAL_BUILD=${2-false}
+USE_DUCK_DNS=${3-false}
+DOMAIN=$4
+TOKEN=$5
 
+
+# Check if S3 bucket is provided
+if [ -z "$1" ]; then
+    echo "Error: S3 bucket is required."
+    exit 1
+fi
+
+# Check if Satisfactory Experimental build setting is provided
+if [ -z "$2" ]; then
+    echo "Error: Satisfactory Experimental build setting is required (true/false)."
+    exit 1
+fi
 
 # install steamcmd: https://developer.valvesoftware.com/wiki/SteamCMD?__cf_chl_jschl_tk__=pmd_WNQPOiK18.h0rf16RCYrARI2s8_84hUMwT.7N1xHYcs-1635248050-0-gqNtZGzNAiWjcnBszQiR#Linux.2FmacOS)
 add-apt-repository multiverse
@@ -103,5 +121,13 @@ EOF
 systemctl enable auto-shutdown
 systemctl start auto-shutdown
 
-# automated backups to s3 every 5 minutes
-su - ubuntu -c "crontab -l -e ubuntu | { cat; echo \"*/5 * * * * /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames/server s3://$S3_SAVE_BUCKET\"; } | crontab -"
+# enable DuckDNS
+if [ "$USE_DUCK_DNS" = "true" ]; then
+    curl "https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN"
+    # Add the DuckDNS update command to crontab for the user
+    su - ubuntu -c " (crontab -l 2>/dev/null; echo \"@reboot            /usr/bin/curl 'https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN'\") | crontab -"
+fi
+
+# enable automated backups to S3 every 5 minutes
+su - ubuntu -c " (crontab -l 2>/dev/null; echo \"*/5 * * * *        /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames/server s3://$S3_SAVE_BUCKET\") | crontab -"
+

@@ -131,9 +131,13 @@ export class ServerHostingStack extends Stack {
       bucket: startupScript.bucket,
       bucketKey: startupScript.s3ObjectKey,
     });
+
+    // collect options for startup script
+    const useDuckDns = !!(Config.duckDnsDomain && Config.duckDnsToken);
+
     server.userData.addExecuteFileCommand({
       filePath: localPath,
-      arguments: `${savesBucket.bucketName} ${Config.useExperimentalBuild}`
+      arguments: `${savesBucket.bucketName} ${Config.useExperimentalBuild} ${useDuckDns} ${Config.duckDnsDomain} ${Config.duckDnsToken}`
     });
 
     //////////////////////////////

@@ -50,5 +50,9 @@ export const Config = {
      subnetId: '',
 
      // Needed if subnetId is specified (e.g. us-west-2a).
-     availabilityZone: ''
+     availabilityZone: '',
+
+     // Needed if you want to use DuckDNS domain
+     duckDnsDomain: "",
+     duckDnsToken: ""
 };
