@@ -128,6 +128,8 @@ if [ "$USE_DUCK_DNS" = "true" ]; then
     su - ubuntu -c " (crontab -l 2>/dev/null; echo \"@reboot            /usr/bin/curl 'https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN'\") | crontab -"
 fi
 
-# enable automated backups to S3 every 5 minutes
-su - ubuntu -c " (crontab -l 2>/dev/null; echo \"*/5 * * * *        /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames/server s3://$S3_SAVE_BUCKET\") | crontab -"
+# enable automated backups to S3 Bucket every 5 minutes
+su - ubuntu -c " (crontab -l 2>/dev/null; echo \"*/5 * * * *        /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames s3://$S3_SAVE_BUCKET\") | crontab -"
 
+# restore saves from S3 Bucket
+su - ubuntu -c "/usr/local/bin/aws s3 sync s3://$S3_SAVE_BUCKET /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames"
