@@ -3,14 +3,16 @@
 # Note: Arguments to this script
 #  1: string - S3 bucket for your backup save files (required)
 #  2: true|false - whether to use Satisfactory Experimental build (required)
-#  3: true|false - whether to use DuckDNS (optional, default false)
-#  4: string - DuckDNS Domain Name (optional)
-#  5: string - DuckDNS Token (optional)
+#  3: true|false - whether to use mods (required)
+#  4: true|false - whether to use DuckDNS (optional, default false)
+#  5: string - DuckDNS Domain Name (optional)
+#  6: string - DuckDNS Token (optional)
 S3_SAVE_BUCKET=$1
 USE_EXPERIMENTAL_BUILD=${2-false}
-USE_DUCK_DNS=${3-false}
-DOMAIN=$4
-TOKEN=$5
+USE_MODS=${3-false}
+USE_DUCK_DNS=${4-false}
+DOMAIN=$5
+TOKEN=$6
 
 
 # Check if S3 bucket is provided
@@ -44,6 +46,47 @@ else
 fi
 # note, we are switching users because steam doesn't recommend running steamcmd as root
 su - ubuntu -c "$STEAM_INSTALL_SCRIPT"
+
+
+if [ $USE_MODS = "true" ]; then
+# install Satisfactory Mod Manager
+    /usr/bin/wget https://github.com/satisfactorymodding/ficsit-cli/releases/download/v0.6.0/ficsit_linux_amd64.deb -O /tmp/ficsit_linux_amd64.deb
+    /usr/bin/apt install /tmp/ficsit_linux_amd64.deb
+    rm /tmp/ficsit_linux_amd64.deb
+
+    # init installation
+    su - ubuntu -c "/usr/bin/ficsit installation add /home/ubuntu/.local/share/Steam/steamapps/common/SatisfactoryDedicatedServer/"
+
+    # create config for installed mods
+cat << EOF > /home/ubuntu/.local/share/ficsit/profiles.json
+{
+    "profiles": {
+        "Default": {
+            "mods": {
+                "DaisyChainEverything": {
+                    "version": ">=1.0.9",
+                    "enabled": true
+                },
+                "InfiniteZoop": {
+                    "version": ">=1.8.23",
+                    "enabled": true
+                },
+                "CurveBuilder": {
+                    "version": ">=1.0.4",
+                    "enabled": true
+                }
+            },
+            "name": "Default",
+            "required_targets": null
+        }
+    },
+    "selected_profile": "Default",
+    "version": 0
+}
+EOF
+    # apply mods
+    su - ubuntu -c "/usr/bin/ficsit apply"
+fi
 
 # enable as server so it stays up and start: https://satisfactory.fandom.com/wiki/Dedicated_servers/Running_as_a_Service
 cat << EOF > /etc/systemd/system/satisfactory.service
