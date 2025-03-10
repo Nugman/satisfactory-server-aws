@@ -31,6 +31,9 @@ export const Config = {
      // Set to true if you want to use Satisfactory Experimental
      useExperimentalBuild: false,
 
+     // Set to true if you want to assign an elastic IP address (EIP)
+     useEip: false,
+
      // ------------------------------------------------------------------------
 
      // Optional parameters

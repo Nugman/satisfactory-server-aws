@@ -62,7 +62,7 @@ export class ServerHostingStack extends Stack {
       description: "Allow Satisfactory client to connect to server",
     });
 
-    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(7777), "Satisfactory  Game port TCP");
+    securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(7777), "Satisfactory Game port TCP");
     securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.udp(7777), "Satisfactory Game port UDP");
 
     let machineImageMap: Record<string, string> = {};
@@ -80,12 +80,21 @@ export class ServerHostingStack extends Stack {
         }
       ],
 
-      // Aerver needs a public IP to allow connections
+      // Server needs a public IP to allow connections
       vpcSubnets,
       userDataCausesReplacement: true,
       vpc,
       securityGroup,
     });
+    
+    if (Config.useEip) {
+      const eip = new ec2.CfnEIP(this, 'IP')
+      // Elastic IP reference
+      new ec2.CfnEIPAssociation(this, 'Association', {
+        eip: eip.ref,
+        instanceId: server.instanceId,
+      })
+    }    
 
     // Add Base SSM Permissions, so we can use AWS Session Manager to connect to our server, rather than external SSH.
     server.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
