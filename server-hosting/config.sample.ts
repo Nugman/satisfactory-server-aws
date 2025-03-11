@@ -56,12 +56,14 @@ export const Config = {
      availabilityZone: '',
 
      // Needed if you want to use DuckDNS domain
-     duckDnsDomain: "",
-     duckDnsToken: "",
+     duckDnsDomain: '',
+     duckDnsToken: '',
 
-     // Set to true if you want to install Satisfactory Mods (see https://ficsit.app/)
+     // Set to true if you want to install Satisfactory Mods 
+     // (see https://ficsit.app/)
      //
-     // When you set this to true, don't forget to configure the mods in install.s at line 60
+     // When you set this to true, don't forget to configure the mods in 
+     // scripts/install.sh at line 60
      // see https://github.com/satisfactorymodding/ficsit-cli/issues/72#issuecomment-2436314810
      useMods: false
 };
