@@ -11,4 +11,5 @@ cdk.context.json
 
 # Configuration
 **/*config.ts
+**/*mods.json
 **/*html-template.html

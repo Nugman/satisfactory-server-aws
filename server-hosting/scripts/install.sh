@@ -49,7 +49,7 @@ su - ubuntu -c "$STEAM_INSTALL_SCRIPT"
 
 
 if [ $USE_MODS = "true" ]; then
-# install Satisfactory Mod Manager
+    # install Satisfactory Mod Manager
     /usr/bin/wget https://github.com/satisfactorymodding/ficsit-cli/releases/download/v0.6.0/ficsit_linux_amd64.deb -O /tmp/ficsit_linux_amd64.deb
     /usr/bin/apt install /tmp/ficsit_linux_amd64.deb
     rm /tmp/ficsit_linux_amd64.deb
@@ -57,33 +57,6 @@ if [ $USE_MODS = "true" ]; then
     # init installation
     su - ubuntu -c "/usr/bin/ficsit installation add /home/ubuntu/.local/share/Steam/steamapps/common/SatisfactoryDedicatedServer/"
 
-    # create config for installed mods
-cat << EOF > /home/ubuntu/.local/share/ficsit/profiles.json
-{
-    "profiles": {
-        "Default": {
-            "mods": {
-                "DaisyChainEverything": {
-                    "version": ">=1.0.9",
-                    "enabled": true
-                },
-                "InfiniteZoop": {
-                    "version": ">=1.8.23",
-                    "enabled": true
-                },
-                "CurveBuilder": {
-                    "version": ">=1.0.4",
-                    "enabled": true
-                }
-            },
-            "name": "Default",
-            "required_targets": null
-        }
-    },
-    "selected_profile": "Default",
-    "version": 0
-}
-EOF
     # apply mods
     su - ubuntu -c "/usr/bin/ficsit apply"
 fi

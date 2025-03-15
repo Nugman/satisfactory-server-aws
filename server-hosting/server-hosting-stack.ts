@@ -94,7 +94,7 @@ export class ServerHostingStack extends Stack {
         eip: eip.ref,
         instanceId: server.instanceId,
       })
-    }    
+    }  
 
     // Add Base SSM Permissions, so we can use AWS Session Manager to connect to our server, rather than external SSH.
     server.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
@@ -128,11 +128,31 @@ export class ServerHostingStack extends Stack {
     server.userData.addCommands('sudo apt-get install unzip -y')
     server.userData.addCommands('curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install')
 
+    // modding support
+    if (Config.useMods) {
+      server.userData.addCommands('su - ubuntu -c "mkdir -p /home/ubuntu/.local/share/ficsit"')
+
+      // prepare the mod config file as an S3 asset
+      const modConf = new s3_assets.Asset(this, `${Config.prefix}ModConfig`, {
+        path: './server-hosting/scripts/mods.json',
+      });
+      modConf.grantRead(server.role);
+
+      // download mod config file from S3
+      const modConfigFile = server.userData.addS3DownloadCommand({
+        bucket: modConf.bucket,
+        bucketKey: modConf.s3ObjectKey,
+        localFile: '/home/ubuntu/.local/share/ficsit/profiles.json',
+      });
+      server.userData.addCommands('chown ubuntu:ubuntu /home/ubuntu/.local/share/ficsit/profiles.json')
+    }
+
     // package startup script and grant read access to server
     const startupScript = new s3_assets.Asset(this, `${Config.prefix}InstallAsset`, {
       path: './server-hosting/scripts/install.sh'
     });
     startupScript.grantRead(server.role);
+    
 
     // download and execute startup script
     // with save bucket name as argument

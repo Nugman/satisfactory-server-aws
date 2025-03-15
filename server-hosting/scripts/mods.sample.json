@@ -1,0 +1,20 @@
+{
+    "profiles": {
+        "Default": {
+            "mods": {
+                "[MOD_ID_1]": {
+                    "version": ">=[VERSION_1]",
+                    "enabled": true
+                },
+                "[MOD_ID_2]": {
+                    "version": ">=[VERSION_2]",
+                    "enabled": true
+                }
+            },
+            "name": "Default",
+            "required_targets": null
+        }
+    },
+    "selected_profile": "Default",
+    "version": 0
+}

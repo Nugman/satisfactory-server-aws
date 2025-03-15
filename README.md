@@ -177,6 +177,18 @@ however these are unsupported so you'll need to work it out for yourself:
    handle everything else behind the scenes. This method may not allow you to
    use a custom domain. Populate the related settings in `config.ts` to enable.
 
+## Modding support
+
+You can use mods that are installed during the deployment of the EC2 instance.
+To do so, set the option `useMods = true` in `config.ts`. Configure the mods 
+you like to install and their preferred version in `./scripts/mods.json`. 
+Copy `./scripts/mods.sample.json` for a starting point and replace the placeholders
+ `[MOD_ID_x]` and `[VERSION_x]` with the actual values. The `MOD_ID` can be obtained
+ from the URL of the mod's page on https://ficsit.app/ (e.g `https://ficsit.app/mod/[MOD_ID]`).
+
+See https://github.com/satisfactorymodding/ficsit-cli/issues/72#issuecomment-2436314810 
+for a real life example.
+
 ## Contributing
 
 This project is licensed under the MIT license, see [LICENSE](LICENSE) for more
@@ -188,7 +200,7 @@ anymore.
 
 ## Credits
 
-This project is a fork of [Dan Fey's](https://github.com/feydan)
+This project is a fork of [Karl Nicoll's](https://github.com/karlnicoll/satisfactory-server-aws) fork of [Dan Fey's](https://github.com/feydan)
 satisfactory-server-aws project
 ([link](https://github.com/feydan/satisfactory-server-aws)). Most of the credit
 should go to them for the initial effort.
