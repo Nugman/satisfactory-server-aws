@@ -32,18 +32,6 @@ on AWS.  It includes the following:
 * A Lambda browser endpoint to
   [start the server back up](#starting-the-server-back-up)
 
-## Costs
-
-If you play on the server 2 hours per day, this setup will cost around $13/month
-on AWS. Note that this number **scales by hours played**. Someone playing 4
-hours a day should expect to pay around $26/month, someone playing 2 hours a
-week should expect to pay around $2-3/month
-
-Since the server automatically shuts down when not in use, you only pay when the
-server is up and you (or your friends) are actively playing on it.
-
-S3 and Lambda usage costs are free tier eligible.
-
 ## Requirements
 
 What you will need to use this project:
@@ -72,14 +60,17 @@ good start as the datacentre is in London. A full list of AWS regions (and their
 nearest city) can be found
 [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions).
 
-You can also set the ec2 instance type in the `config.ts` file. The default one
-in `config.sample.ts` meets the requirements for the Satisfactory Dedicated
-Server [here](https://satisfactory.wiki.gg/wiki/Dedicated_servers#Requirements).
+You may also set the EC2 instance type in the `config.ts` file. The [default one](https://aws.amazon.com/ec2/instance-types/m6a/)
+in `config.sample.ts` meets the [requirements for the Satisfactory Dedicated
+Server](https://satisfactory.wiki.gg/wiki/Dedicated_servers#Requirements).
 If you are running a higher player count, or a large factory, you may need to
 change the instance type to a more powerful server, but this will most likely
 incur a higher cost. You may also be able to save a bit of $$ by choosing a
 _smaller_ instance type. The full list of instance types is available
-[here](https://aws.amazon.com/ec2/instance-types/).
+[here](https://docs.aws.amazon.com/de_de/global-infrastructure/latest/regions/aws-regions.html). The EC2 available instance types are described [here](https://aws.amazon.com/de/ec2/instance-types/).
+
+_Note_: Not all instance types may be available in all AWS regions. See AWS
+documentation for details.
 
 ## Quick Start
 
@@ -189,6 +180,24 @@ Copy `./scripts/mods.sample.json` for a starting point and replace the placehold
 See https://github.com/satisfactorymodding/ficsit-cli/issues/72#issuecomment-2436314810 
 for a real life example.
 
+## Costs
+
+If you play on the server 2 hours per day, this setup will cost around $13/month
+on AWS. Note that this number **scales by hours played**. Someone playing 4
+hours a day should expect to pay around $26/month, someone playing 2 hours a
+week should expect to pay around $2-3/month. The costs mainly depend on the 
+choice of the EC2 instance type (see [Configuration](#configuration) above).
+
+Since the server automatically shuts down when not in use, you only pay when the
+server is up and you (and/or your friends) are actively playing on it.
+
+If you keep the instance set up, the EBS volume will cost around 5ct/day. If you
+are not playing over a longer period of time, you can tear down the server
+with `npx cdk destroy`. It can be re-deployed anytime. All saves and data are 
+stored in an S3 bucket and automatically restored on next deployment.
+
+S3 and Lambda usage costs are free tier eligible.
+
 ## Contributing
 
 This project is licensed under the MIT license, see [LICENSE](LICENSE) for more
@@ -200,20 +209,28 @@ anymore.
 
 ## Credits
 
-This project is a fork of [Karl Nicoll's](https://github.com/karlnicoll/satisfactory-server-aws) fork of [Dan Fey's](https://github.com/feydan)
-satisfactory-server-aws project
-([link](https://github.com/feydan/satisfactory-server-aws)). Most of the credit
-should go to them for the initial effort.
+This project is a fork of [Karl Nicoll's](https://github.com/karlnicoll/satisfactory-server-aws) fork of [Dan Fey's](https://github.com/feydan/satisfactory-server-aws) satisfactory-server-aws project. 
+Most of the credit should go to them for the initial effort.
 
 ## FAQs
 
-### Why would I use AWS when I can host for free on my own computer?
+### Why would I use a dedicated server when I can host for free on my own computer?
 
 * If you want to allow friends to play on your server without you, you will have
   to always leave your computer on and the server running continuously, even if
   you are not playing.  Having it on the cloud frees up your hardware.
 * Your computer may not have enough resources to host the server and play at the
   same time.
+* You may not want to punch a hole into your internet security by exposing an open
+port to the internet via port forwarding.
+
+### Why would I choose AWS over a dedicated game server hoster?
+
+AWS is has a pay-per-use model, so you just pay when you and/or your friends
+are actual playing and the server instance is running. Especially when you
+only play occasionally, AWS might be cheaper than a dedicated server that
+keeps running 24/7.
+
 
 ### How much does it cost?
 
