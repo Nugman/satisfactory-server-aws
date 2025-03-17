@@ -58,7 +58,7 @@ You should set the region closest to where you and your friends play, as this
 is where your dedicated server will run from. e.g. In the UK, `eu-west-2` is a
 good start as the datacentre is in London. A full list of AWS regions (and their
 nearest city) can be found
-[here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions).
+[here](https://docs.aws.amazon.com/de_de/global-infrastructure/latest/regions/aws-regions.html).
 
 You may also set the EC2 instance type in the `config.ts` file. The [default one](https://aws.amazon.com/ec2/instance-types/m6a/)
 in `config.sample.ts` meets the [requirements for the Satisfactory Dedicated
@@ -66,8 +66,7 @@ Server](https://satisfactory.wiki.gg/wiki/Dedicated_servers#Requirements).
 If you are running a higher player count, or a large factory, you may need to
 change the instance type to a more powerful server, but this will most likely
 incur a higher cost. You may also be able to save a bit of $$ by choosing a
-_smaller_ instance type. The full list of instance types is available
-[here](https://docs.aws.amazon.com/de_de/global-infrastructure/latest/regions/aws-regions.html). The EC2 available instance types are described [here](https://aws.amazon.com/de/ec2/instance-types/).
+_smaller_ instance type. The available EC2  instance types are described [here](https://aws.amazon.com/de/ec2/instance-types/).
 
 _Note_: Not all instance types may be available in all AWS regions. See AWS
 documentation for details.
@@ -100,7 +99,7 @@ is running.
 
 Before you connect, you will need to start the server back up again. If you are
 starting the server yourself, you can do this from the
-[EC2 section of the AWS website](https://eu-west-2.console.aws.amazon.com/ec2/home).
+[EC2 section of the AWS console](https://console.aws.amazon.com/ec2/home).
 
 For your friends, an HTTPS API endpoint is available to connect to. You will
 have received a link to this when you deployed with `npx cdk deploy`. For
@@ -183,18 +182,20 @@ for a real life example.
 ## Costs
 
 If you play on the server 2 hours per day, this setup will cost around $13/month
-on AWS. Note that this number **scales by hours played**. Someone playing 4
+on AWS. Note that this amount **scales by hours played**. Someone playing 4
 hours a day should expect to pay around $26/month, someone playing 2 hours a
 week should expect to pay around $2-3/month. The costs mainly depend on the 
-choice of the EC2 instance type (see [Configuration](#configuration) above).
+choice of the EC2 instance type and region (see [Configuration](#configuration) above). Your mileage may vary, but you can observe the costs on a daily basis 
+using the Cost Management menu in your AWS console.
 
 Since the server automatically shuts down when not in use, you only pay when the
 server is up and you (and/or your friends) are actively playing on it.
 
-If you keep the instance set up, the EBS volume will cost around 5ct/day. If you
-are not playing over a longer period of time, you can tear down the server
-with `npx cdk destroy`. It can be re-deployed anytime. All saves and data are 
-stored in an S3 bucket and automatically restored on next deployment.
+As long as the instance is set up, the EBS volume (virtual harddrive) will be 
+charged ~5ct/day. If you are not playing over a longer period of time, you can
+tear down the environment with `npx cdk destroy`. It can be re-deployed anytime.
+All saves and data are stored in a S3 bucket and will be automatically restored
+on next deployment.
 
 S3 and Lambda usage costs are free tier eligible.
 
@@ -222,7 +223,7 @@ Most of the credit should go to them for the initial effort.
 * Your computer may not have enough resources to host the server and play at the
   same time.
 * You may not want to punch a hole into your internet security by exposing an open
-port to the internet via port forwarding.
+port to the internet via port forwarding or opening it in your firewall.
 
 ### Why would I choose AWS over a dedicated game server hoster?
 
