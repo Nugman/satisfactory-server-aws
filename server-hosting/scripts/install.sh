@@ -145,7 +145,7 @@ if [ "$USE_DUCK_DNS" = "true" ]; then
 fi
 
 # enable automated backups to S3 Bucket every 5 minutes
-su - ubuntu -c " (crontab -l 2>/dev/null; echo \"*/5 * * * *        /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames s3://$S3_SAVE_BUCKET\") | crontab -"
+su - ubuntu -c " (crontab -l 2>/dev/null; echo \"*/5 * * * *        /usr/local/bin/aws s3 sync /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames s3://$S3_SAVE_BUCKET --delete\") | crontab -"
 
 # restore saves from S3 Bucket
 su - ubuntu -c "/usr/local/bin/aws s3 sync s3://$S3_SAVE_BUCKET /home/ubuntu/.config/Epic/FactoryGame/Saved/SaveGames"
